@@ -22,6 +22,7 @@ public class App {
         search(".*\\.java", mainDir, endWithJava);
         search(".*\\.txt", mainDir, endWithTxt);
 
+
         // STORING A DATA AS LINES IN TWO SEPARATE LISTS
         List<String> listOfLinesJava = addLinesToList(endWithJava);
         List<String> listOfLinesTxt = addLinesToList(endWithTxt);
@@ -33,7 +34,6 @@ public class App {
         for (String s : listOfLinesTxt) {
             System.out.println(s);
         }
-        System.out.println("-------------------");
         for (String s : listOfLinesJava) {
             System.out.println(s);
         }
@@ -42,26 +42,36 @@ public class App {
 
     private static void formatLinesInList(List<String> list) {
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).isEmpty()) {
-                list.remove(i);
-            }
             list.set(i, list.get(i).trim().replaceAll(" +", " "));
         }
 
     }
 
-    // METHOD FOR ADDING LINES TO A LIST FROM A FILE
+    // METHOD FOR ADDING LINES TO A LIST FROM A FILE, DOES NOT ADD EMPTY LINES
     private static List<String> addLinesToList(List<String> list) {
         List<String> listOfLines = new ArrayList<>();
         try {
+            String delimiter = "##########";
+            String previousIteration = "";
             for (String s : list) {
                 File f = new File(s);
                 Scanner scnr = new Scanner(f);
                 while (scnr.hasNext()) {
-                    listOfLines.add(scnr.nextLine());
+                    String str = scnr.nextLine();
+                    if (!s.equals(previousIteration)) {
+                        listOfLines.add(delimiter);
+                    }
+                    if (!str.isEmpty()) {
+                        listOfLines.add(str);
+                    }
+
+                    previousIteration = s;
                 }
+
             }
-            return listOfLines;
+
+            //listOfLines.add(delimiter);
+            //return listOfLines;
         } catch (FileNotFoundException e) {
             System.out.println(e);
         }
@@ -87,8 +97,6 @@ public class App {
         }
 
     }
-
-
 }
 
 
@@ -104,7 +112,6 @@ public class App {
             System.out.println(token1 + " " + token2 + " " + token3 + " " + token4 + " " + token5);
         }
         scnr.close();
-
 
         FileWriter output = new FileWriter(toFile);
         output.write(token1 + token2 + token3 + token4 + token5);
